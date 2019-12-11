@@ -23,9 +23,9 @@ import java.util.List;
 
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
-    private Context context;
+    private OnMovieClickListener onMovieClickListener;
 
-    private List<Movie> movies = new ArrayList<>();
+    private List<Movie> movies;
 
     public List<Movie> getMovies() {
         return movies;
@@ -35,7 +35,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         this.movies = movies;
     }
 
-    public MovieAdapter(Context context) {this.context = context;}
+    public MovieAdapter(List<Movie> movies, OnMovieClickListener onMovieClickListener) {
+        this.movies = movies;
+        this.onMovieClickListener = onMovieClickListener;
+    }
 
     @NonNull
     @Override
@@ -46,20 +49,16 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, int i) {
-        final Movie movie =  getMovies().get(i);
+    public void onBindViewHolder(@NonNull MovieViewHolder movieViewHolder, final int position) {
+        final Movie movie =  getMovies().get(position);
 
-        Glide.with(context).load("https://image.tmdb.org/t/p/original/" + movie.getPoster()).into(movieViewHolder.ivPoster);
+        Glide.with(movieViewHolder.ivPoster.getContext()).load("https://image.tmdb.org/t/p/original/" + movie.getPoster()).into(movieViewHolder.ivPoster);
         movieViewHolder.tvTitle.setText(movie.getTitle());
         movieViewHolder.tvShortDesc.setText(movie.getShortDesc());
         movieViewHolder.cvMovie.setOnClickListener(new View.OnClickListener(){
-
             @Override
             public void onClick(View view) {
-                Intent detailIntent = new Intent(context, MovieDetailActivity.class);
-                detailIntent.putExtra(MovieDetailActivity.ID, movie.getId());
-                detailIntent.putExtra(MovieDetailActivity.TITLE, movie.getTitle());
-                context.startActivity(detailIntent);
+                onMovieClickListener.onMovieClick(movies.get(position));
             }
         });
     }
@@ -82,5 +81,9 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
             tvTitle = itemView.findViewById(R.id.tv_title);
             tvShortDesc = itemView.findViewById(R.id.tv_short_desc);
         }
+    }
+
+    public interface OnMovieClickListener {
+        void onMovieClick(Movie movie);
     }
 }

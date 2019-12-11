@@ -1,6 +1,7 @@
 package com.example.dicoding_made_1.view.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import com.example.dicoding_made_1.adapter.GenreAdapter;
 import com.example.dicoding_made_1.adapter.MovieAdapter;
 import com.example.dicoding_made_1.model.Genre;
 import com.example.dicoding_made_1.model.Movie;
+import com.example.dicoding_made_1.view.detail.MovieDetailActivity;
 import com.example.dicoding_made_1.view.detail.MovieDetailPresenter;
 
 import java.util.ArrayList;
@@ -25,7 +27,7 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity implements MainView, View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements MainView, View.OnClickListener, MovieAdapter.OnMovieClickListener {
 
     private MainPresenter presenter;
     private Context context;
@@ -48,12 +50,7 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
         edtSearch = findViewById(R.id.edt_search);
         Button btnSearch = findViewById(R.id.btn_search);
         rvMovie = findViewById(R.id.rv_movie);
-        adapter = new MovieAdapter(context);
-
         btnSearch.setOnClickListener(this);
-        rvMovie.setLayoutManager(new LinearLayoutManager(context));
-        adapter.setMovies(movies);
-        rvMovie.setAdapter(adapter);
     }
 
     @Override
@@ -80,9 +77,13 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
     @Override
     public void onSuccessGetMovie(List<Movie> movies) {
         rvMovie.setVisibility(View.VISIBLE);
-        this.movies.clear();
-        this.movies.addAll(movies);
-        adapter.notifyDataSetChanged();
+//        this.movies.clear();
+//        this.movies.addAll(movies);
+//        adapter.notifyDataSetChanged();
+        rvMovie.setLayoutManager(new LinearLayoutManager(context));
+        adapter = new MovieAdapter(movies, this);
+        adapter.setMovies(movies);
+        rvMovie.setAdapter(adapter);
     }
 
     @Override
@@ -104,5 +105,14 @@ public class MainActivity extends AppCompatActivity implements MainView, View.On
     protected void onDestroy() {
         onDetachView();
         super.onDestroy();
+    }
+
+    @Override
+    public void onMovieClick(Movie movie) {
+        Intent detailIntent = new Intent(context, MovieDetailActivity.class);
+        detailIntent.putExtra(MovieDetailActivity.ID, movie.getId());
+        detailIntent.putExtra(MovieDetailActivity.TITLE, movie.getTitle());
+        detailIntent.putExtra("MOVIE", movie);
+        context.startActivity(detailIntent);
     }
 }

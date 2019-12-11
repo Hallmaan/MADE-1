@@ -1,9 +1,12 @@
 package com.example.dicoding_made_1.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Movie {
+public class Movie implements Parcelable {
     @SerializedName("id")
     @Expose
     private int id;
@@ -16,7 +19,37 @@ public class Movie {
     @Expose
     private String shortDesc;
 
-    public Movie() {}
+    protected Movie(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        shortDesc = in.readString();
+        poster = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeInt(id);
+        parcel.writeString(title);
+        parcel.writeString(shortDesc);
+        parcel.writeString(poster);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<Movie> CREATOR = new Creator<Movie>() {
+        @Override
+        public Movie createFromParcel(Parcel in) {
+            return new Movie(in);
+        }
+
+        @Override
+        public Movie[] newArray(int size) {
+            return new Movie[size];
+        }
+    };
 
     public int getId() {
         return id;

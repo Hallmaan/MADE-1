@@ -9,6 +9,7 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide;
 import com.example.dicoding_made_1.R;
 import com.example.dicoding_made_1.adapter.GenreAdapter;
 import com.example.dicoding_made_1.model.Genre;
+import com.example.dicoding_made_1.model.Movie;
 import com.example.dicoding_made_1.model.MovieDetailResponse;
 import com.example.dicoding_made_1.view.base.View;
 
@@ -39,11 +41,19 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
     private RecyclerView rvGenre;
     private GenreAdapter adapter;
     private List<Genre> genres = new ArrayList<>();
+    private Movie movie;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_movie_detail);
+
+        if (getIntent().hasExtra("MOVIE")) {
+            movie = getIntent().getParcelableExtra("MOVIE");
+        }
+
+        Log.e("TESTING ", movie.getTitle());
+
 
         presenter = new MovieDetailPresenter();
         onAttachView();
@@ -51,8 +61,8 @@ public class MovieDetailActivity extends AppCompatActivity implements MovieDetai
         Intent intent = getIntent();
         ActionBar actionBar = getSupportActionBar();
         if(intent != null){
-            id = intent.getIntExtra(ID, 0);
-            actionBar.setTitle(intent.getStringExtra(TITLE));
+            id = movie.getId();
+            actionBar.setTitle(movie.getTitle());
         }
 
         actionBar.setDisplayHomeAsUpEnabled(true);

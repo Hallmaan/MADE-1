@@ -1,11 +1,14 @@
 package com.example.dicoding_made_1.model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-public class MovieDetailResponse {
+public class MovieDetailResponse implements Parcelable {
     @SerializedName("title")
     @Expose
     private String title;
@@ -43,6 +46,46 @@ public class MovieDetailResponse {
     private String tagline;
 
     public MovieDetailResponse() {}
+
+    protected MovieDetailResponse(Parcel in) {
+        title = in.readString();
+        poster = in.readString();
+        rating = in.readString();
+        duration = in.readString();
+        language = in.readString();
+        releaseDate = in.readString();
+        overview = in.readString();
+        tagline = in.readString();
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(title);
+        dest.writeString(poster);
+        dest.writeString(rating);
+        dest.writeString(duration);
+        dest.writeString(language);
+        dest.writeString(releaseDate);
+        dest.writeString(overview);
+        dest.writeString(tagline);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    public static final Creator<MovieDetailResponse> CREATOR = new Creator<MovieDetailResponse>() {
+        @Override
+        public MovieDetailResponse createFromParcel(Parcel in) {
+            return new MovieDetailResponse(in);
+        }
+
+        @Override
+        public MovieDetailResponse[] newArray(int size) {
+            return new MovieDetailResponse[size];
+        }
+    };
 
     public String getTitle() {
         return title;
